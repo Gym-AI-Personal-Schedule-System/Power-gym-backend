@@ -64,7 +64,7 @@ public class User {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateDateTime;
 
-    @Column(name = "is_active",columnDefinition = "integer default 0")
+    @Column(name = "is_active",columnDefinition = "integer default 1")
     private int isActive;
 
 
@@ -77,4 +77,22 @@ public class User {
         this.password = password;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userCode='" + userCode + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                ", name='" + name + '\'' +
+                ", mobileNum='" + mobileNum + '\'' +
+                ", nic='" + nic + '\'' +
+                ", address='" + address + '\'' +
+                ", createDateTime=" + createDateTime +
+                ", updateDateTime=" + updateDateTime +
+                ", isActive=" + isActive +
+                '}';
+    }
 }

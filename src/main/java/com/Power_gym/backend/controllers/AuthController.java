@@ -2,26 +2,32 @@ package com.Power_gym.backend.controllers;
 
 import com.Power_gym.backend.DTO.JwtResponse;
 import com.Power_gym.backend.DTO.LoginRequest;
-import com.Power_gym.backend.DTO.MessageResponse;
+import com.Power_gym.backend.DTO.ResponseMessage;
 import com.Power_gym.backend.DTO.SignupRequest;
+import com.Power_gym.backend.Util.IdGenerationUtil;
+import com.Power_gym.backend.models.Privilege;
 import com.Power_gym.backend.models.Role;
 import com.Power_gym.backend.models.User;
 import com.Power_gym.backend.models.enums.ERole;
+import com.Power_gym.backend.repository.PrivilegeDetailRepository;
 import com.Power_gym.backend.repository.RoleRepository;
 import com.Power_gym.backend.repository.UserRepository;
 import com.Power_gym.backend.security.jwt.JwtUtils;
 import com.Power_gym.backend.security.services.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +48,11 @@ public class AuthController {
 
     final JwtUtils jwtUtils;
 
+    final IdGenerationUtil idGenerationUtil;
+
+    @Autowired
+    final PrivilegeDetailRepository privilegeDetailRepository;
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -53,17 +64,30 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
+        // Fetch roles as Set<Role>
+        Set<Role> rolesSet = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + userDetails.getUsername()))
+                .getRoles();
+
+        // Process each Role object
+        List<String> privileges = new ArrayList<>();
+        for (Role role : rolesSet) {
+            privileges = privilegeDetailRepository.findPrivilegeIdsByRole(role)
+                    .stream()
+                    .map(Privilege::getPrivilegeName)
+                    .collect(Collectors.toList());
+        }
+        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles, privileges));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+            return ResponseEntity.badRequest().body(new ResponseMessage("Error: Username is already taken!"));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+            return ResponseEntity.badRequest().body(new ResponseMessage("Error: Email is already in use!"));
         }
 
         // Create new user's account
@@ -95,8 +119,9 @@ public class AuthController {
         }
 
         user.setRoles(roles);
+        user.setUserCode(idGenerationUtil.userCodeGenerator());
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok(new ResponseMessage("User registered successfully!"));
     }
 }
