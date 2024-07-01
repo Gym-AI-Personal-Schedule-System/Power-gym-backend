@@ -23,4 +23,12 @@ public class Role {
     @Column(name = "is_active",columnDefinition = "integer default 1")
     private int isActive ;
 
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", name=" + name +
+                ", isActive=" + isActive +
+                '}';
+    }
 }

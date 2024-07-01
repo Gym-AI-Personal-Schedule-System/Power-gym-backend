@@ -77,4 +77,22 @@ public class User {
         this.password = password;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userCode='" + userCode + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                ", name='" + name + '\'' +
+                ", mobileNum='" + mobileNum + '\'' +
+                ", nic='" + nic + '\'' +
+                ", address='" + address + '\'' +
+                ", createDateTime=" + createDateTime +
+                ", updateDateTime=" + updateDateTime +
+                ", isActive=" + isActive +
+                '}';
+    }
 }
