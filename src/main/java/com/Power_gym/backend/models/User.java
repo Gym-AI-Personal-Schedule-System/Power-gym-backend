@@ -64,7 +64,7 @@ public class User {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateDateTime;
 
-    @Column(name = "is_active",columnDefinition = "integer default 0")
+    @Column(name = "is_active",columnDefinition = "integer default 1")
     private int isActive;
 
 
