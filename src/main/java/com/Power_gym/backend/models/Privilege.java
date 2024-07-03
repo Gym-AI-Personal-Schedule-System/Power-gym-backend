@@ -11,7 +11,7 @@ import lombok.Setter;
 public class Privilege {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "privilege_id", nullable = false)
+    @Column(name = "privilege_id")
     private Integer privilegeId;
 
     @Column(name = "privilege_name")
