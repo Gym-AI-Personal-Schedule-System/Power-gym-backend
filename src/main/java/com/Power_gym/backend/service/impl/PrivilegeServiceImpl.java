@@ -1,7 +1,8 @@
 package com.Power_gym.backend.service.impl;
 
 import com.Power_gym.backend.DTO.PrivilegeDTO;
-import com.Power_gym.backend.DTO.ResponseMessage;
+import com.Power_gym.backend.DTO.common.ResponseMessage;
+import com.Power_gym.backend.exception.CustomException;
 import com.Power_gym.backend.models.Privilege;
 import com.Power_gym.backend.repository.PrivilegeRepository;
 import com.Power_gym.backend.service.PrivilegeService;
@@ -26,7 +27,9 @@ public class PrivilegeServiceImpl implements PrivilegeService {
 
     @Override
     public ResponseEntity<?> addPrivilege(PrivilegeDTO privilegeDTO) throws Exception {
-//        GeneralUtil.isNullOrEmptyException(privilegeDTO.getPrivilegeName(), "Privilege Name");
+        if (privilegeDTO.getPrivilegeName().isEmpty()){
+            throw new CustomException("privilege Name is empty");
+        }
         privilegeDTO.setStatus(1);
         privilegeRepository.save(modelMapper.map(privilegeDTO, Privilege.class));
 

@@ -1,9 +1,9 @@
 package com.Power_gym.backend.controllers;
 
-import com.Power_gym.backend.DTO.JwtResponse;
-import com.Power_gym.backend.DTO.LoginRequest;
-import com.Power_gym.backend.DTO.ResponseMessage;
-import com.Power_gym.backend.DTO.SignupRequest;
+import com.Power_gym.backend.DTO.JwtResponseDTO;
+import com.Power_gym.backend.DTO.LoginRequestDTO;
+import com.Power_gym.backend.DTO.common.ResponseMessage;
+import com.Power_gym.backend.DTO.SignupRequestDTO;
 import com.Power_gym.backend.Util.IdGenerationUtil;
 import com.Power_gym.backend.models.Privilege;
 import com.Power_gym.backend.models.Role;
@@ -54,7 +54,7 @@ public class AuthController {
     final PrivilegeDetailRepository privilegeDetailRepository;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDTO loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -77,11 +77,11 @@ public class AuthController {
                     .map(Privilege::getPrivilegeName)
                     .collect(Collectors.toList());
         }
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles, privileges));
+        return ResponseEntity.ok(new JwtResponseDTO(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles, privileges));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDTO signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new ResponseMessage("Error: Username is already taken!"));
         }
