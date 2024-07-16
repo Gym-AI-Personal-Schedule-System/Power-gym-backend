@@ -1,4 +1,4 @@
-package com.Power_gym.backend.DTO;
+package com.Power_gym.backend.DTO.common;
 
 import lombok.Getter;
 import lombok.Setter;
