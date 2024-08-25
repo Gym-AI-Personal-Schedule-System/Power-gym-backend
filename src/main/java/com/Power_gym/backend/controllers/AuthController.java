@@ -118,8 +118,17 @@ public class AuthController {
             });
         }
 
+        user.setMobileNum(signUpRequest.getMobileNum());
+        user.setName(signUpRequest.getName());
+        user.setAddress(signUpRequest.getAddress());
+        user.setGender(signUpRequest.getGender());
+        user.setHeight(signUpRequest.getHeight());
+        user.setWeight(signUpRequest.getWeight());
+        user.setBmi(signUpRequest.getBmi());
+        user.setAge(signUpRequest.getAge());
         user.setRoles(roles);
         user.setUserCode(idGenerationUtil.userCodeGenerator());
+        user.setIsActive(1);
         userRepository.save(user);
 
         return ResponseEntity.ok(new ResponseMessage("User registered successfully!"));
