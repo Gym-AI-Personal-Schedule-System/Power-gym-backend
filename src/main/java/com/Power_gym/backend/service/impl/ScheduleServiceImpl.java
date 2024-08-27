@@ -1,9 +1,11 @@
 package com.Power_gym.backend.service.impl;
 
+import com.Power_gym.backend.DTO.ApiResponseDTO;
 import com.Power_gym.backend.DTO.ScheduleDTO;
 import com.Power_gym.backend.DTO.common.ResponseMessage;
 import com.Power_gym.backend.exception.CustomException;
 import com.Power_gym.backend.service.ScheduleService;
+import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -21,6 +24,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final ModelMapper modelMapper;
     @Autowired
     private final RestTemplate restTemplate;
+    Gson gson = new Gson();
 
     public ScheduleServiceImpl(ModelMapper modelMapper, RestTemplate restTemplate) {
         this.modelMapper = modelMapper;
@@ -34,6 +38,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ResponseEntity<?> getSchedule(ScheduleDTO scheduleDTO)throws Exception {
 
+        System.out.println(gson.toJson(scheduleDTO));
         if (scheduleDTO.getAge() < 0 ) {
             throw new CustomException("Age is empty or 0");
         }
@@ -60,7 +65,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
         // Define the Python endpoint URL
         String pythonUrl = url;
-
         // Prepare the request payload using data from ScheduleDTO
         Map<String, Object> payload = new HashMap<>();
         payload.put("age", scheduleDTO.getAge());
@@ -83,18 +87,88 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         try {
             // Make the POST request to the Python endpoint
-            ResponseEntity<Map> responseEntity = restTemplate.exchange(
+            ResponseEntity<String> responseEntity = restTemplate.exchange(
                     pythonUrl,
                     HttpMethod.POST,
                     requestEntity,
-                    Map.class
+                    String.class
             );
 
+            System.out.println("response :" +responseEntity.getBody());
+            // Parse the response using Gson
+            ApiResponseDTO apiResponseDTO = gson.fromJson(responseEntity.getBody(), ApiResponseDTO.class);
+
+            // Extract the prediction and determine the schedule
+            String schedule = determineScheduleFromPrediction(apiResponseDTO.getPrediction());
+
+            // Create JSON response object
+            ApiResponseDTO responseDTO =  ApiResponseDTO.builder().scheduleValue(schedule).build();
+
+
             // Return the response from the Python endpoint
-            return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success",responseEntity.getBody()), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success",responseDTO), HttpStatus.OK);
         } catch (Exception e) {
             // Handle any exceptions that occur during the HTTP request
             return new ResponseEntity<>(new ResponseMessage(HttpStatus.BAD_GATEWAY.value(), "Error" ,"Error while calling Python endpoint: " + e.getMessage()), HttpStatus.BAD_GATEWAY);
         }
+    }
+
+
+    private String determineScheduleFromPrediction(List<List<Integer>> prediction) {
+        int rowPosition = -1;
+        int colPosition = -1;
+
+        // Find the position of '1' in the prediction matrix
+        for (int i = 0; i < prediction.size(); i++) {
+            List<Integer> row = prediction.get(i);
+            for (int j = 0; j < row.size(); j++) {
+                if (row.get(j) == 1) {
+                    rowPosition = i;
+                    colPosition = j;
+                    break;
+                }
+            }
+            if (rowPosition != -1 && colPosition != -1) {
+                break;
+            }
+        }
+
+        switch (colPosition) {
+            case -1:
+                return "Gain Game Plan";
+            case 0:
+                return "Bulk Up Blueprint";
+            case 1:
+                return "Fat Burn Fiesta";
+            case 2:
+                return "Fit Life Routine";
+            case 3:
+                return "Gain Game Plan";
+            case 4:
+                return "Lady Bulk Blueprint";
+            case 5:
+                return "Lean Machine Schedule";
+            case 6:
+                return "Power Packed Woman Plan";
+            default:
+                return "Unknown Schedule";
+        }
+
+        // Determine the schedule based on column position
+//        switch (colPosition) {
+//
+//            case 0:
+//                return "Bulk Up Blueprint";
+//            case 1:
+//                return "Fat Burn Fiesta";
+//            case 2:
+//                return "Fit Life Routine";
+//            case 3:
+//                return "Gain Game Plan";
+//            case 4:
+//                return "Power Plan";
+//            default:
+//                return "Unknown Schedule";
+//        }
     }
 }
