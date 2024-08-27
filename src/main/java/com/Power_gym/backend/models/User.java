@@ -50,11 +50,24 @@ public class User {
     @Column(name = "mobile_num")
     private String mobileNum;
 
-    @Column(name = "nic")
-    private String nic;
-
     @Column(name = "address")
     private String address;
+
+    @Column(name = "gender")
+    private String gender;
+
+    @Column(name = "height",columnDefinition = "integer default 0")
+    private Integer height;
+
+    @Column(name = "weight",columnDefinition = "integer default 0")
+    private Integer weight;
+
+    @Column(name = "bmi",columnDefinition = "integer default 0")
+    private Double bmi;
+
+    @Column(name = "age", columnDefinition = "integer default 0")
+    private Integer age =0;
+
 
     @Column(name = "create_date_time")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -77,22 +90,4 @@ public class User {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userCode='" + userCode + '\'' +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", roles=" + roles +
-                ", name='" + name + '\'' +
-                ", mobileNum='" + mobileNum + '\'' +
-                ", nic='" + nic + '\'' +
-                ", address='" + address + '\'' +
-                ", createDateTime=" + createDateTime +
-                ", updateDateTime=" + updateDateTime +
-                ", isActive=" + isActive +
-                '}';
-    }
 }
