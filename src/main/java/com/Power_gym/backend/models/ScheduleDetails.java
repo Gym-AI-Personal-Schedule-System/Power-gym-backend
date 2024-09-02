@@ -26,6 +26,9 @@ public class ScheduleDetails {
     @Column(name = "height")
     private Integer height;
 
+    @Column(name = "experience")
+    private Integer experience;
+
     @Column(name = "weight")
     private Integer weight;
 

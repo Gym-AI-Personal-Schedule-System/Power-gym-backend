@@ -2,8 +2,11 @@ package com.Power_gym.backend.service.impl;
 
 import com.Power_gym.backend.DTO.ApiResponseDTO;
 import com.Power_gym.backend.DTO.ScheduleDTO;
+import com.Power_gym.backend.DTO.ScheduleRequestDTO;
 import com.Power_gym.backend.DTO.common.ResponseMessage;
 import com.Power_gym.backend.exception.CustomException;
+import com.Power_gym.backend.models.Schedule;
+import com.Power_gym.backend.repository.ScheduleRepository;
 import com.Power_gym.backend.service.ScheduleService;
 import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;
@@ -13,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +28,13 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final ModelMapper modelMapper;
     @Autowired
     private final RestTemplate restTemplate;
+    @Autowired
+    ScheduleRepository scheduleRepository;
+
     Gson gson = new Gson();
+
+    @Value("${powerGym.app.pythonUrl}")
+    private  String url;
 
     public ScheduleServiceImpl(ModelMapper modelMapper, RestTemplate restTemplate) {
         this.modelMapper = modelMapper;
@@ -32,37 +42,12 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
 
-    @Value("${powerGym.app.pythonUrl}")
-    private  String url;
 
     @Override
-    public ResponseEntity<?> getSchedule(ScheduleDTO scheduleDTO)throws Exception {
+    public ResponseEntity<?> getSchedule(ScheduleRequestDTO scheduleDTO)throws Exception {
 
-        System.out.println(gson.toJson(scheduleDTO));
-        if (scheduleDTO.getAge() < 0 ) {
-            throw new CustomException("Age is empty or 0");
-        }
-        if (scheduleDTO.getWorkoutExperience() < 0) {
-            throw new CustomException("Workout Experience is empty");
-        }
-        if (scheduleDTO.getWorkoutTime() < 0) {
-            throw new CustomException("Workout Time is empty");
-        }
-        if (scheduleDTO.getWeight() < 0) {
-            throw new CustomException("Weight is empty");
-        }
-        if (scheduleDTO.getHeight() < 0) {
-            throw new CustomException("Height is empty");
-        }
-        if (scheduleDTO.getBmi() < 0) {
-            throw new CustomException("BMI is empty");
-        }
-        if (scheduleDTO.getGender() == null || scheduleDTO.getGender().trim().isEmpty()) {
-            throw new CustomException("Gender is empty");
-        }
-        if (scheduleDTO.getFitnessGoal() == null || scheduleDTO.getFitnessGoal().trim().isEmpty()) {
-            throw new CustomException("Fitness Goal is empty");
-        }
+        // Validate inputs
+        validateInputs(scheduleDTO);
         // Define the Python endpoint URL
         String pythonUrl = url;
         // Prepare the request payload using data from ScheduleDTO
@@ -93,7 +78,10 @@ public class ScheduleServiceImpl implements ScheduleService {
                     requestEntity,
                     String.class
             );
-
+            // Check for a successful response
+            if (responseEntity.getStatusCode() != HttpStatus.OK) {
+                throw new CustomException("Failed to retrieve schedule: " + responseEntity.getStatusCode());
+            }
             System.out.println("response :" +responseEntity.getBody());
             // Parse the response using Gson
             ApiResponseDTO apiResponseDTO = gson.fromJson(responseEntity.getBody(), ApiResponseDTO.class);
@@ -108,10 +96,37 @@ public class ScheduleServiceImpl implements ScheduleService {
             // Return the response from the Python endpoint
             return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success",responseDTO), HttpStatus.OK);
         } catch (Exception e) {
-            // Handle any exceptions that occur during the HTTP request
-            return new ResponseEntity<>(new ResponseMessage(HttpStatus.BAD_GATEWAY.value(), "Error" ,"Error while calling Python endpoint: " + e.getMessage()), HttpStatus.BAD_GATEWAY);
+            throw new CustomException(e.getMessage());
         }
     }
+
+    private void validateInputs(ScheduleRequestDTO scheduleDTO) throws CustomException {
+        if (scheduleDTO.getAge() < 0) {
+            throw new CustomException("Age is empty or 0");
+        }
+        if (scheduleDTO.getWorkoutExperience() < 0) {
+            throw new CustomException("Workout Experience is empty");
+        }
+        if (scheduleDTO.getWorkoutTime() < 0) {
+            throw new CustomException("Workout Time is empty");
+        }
+        if (scheduleDTO.getWeight() < 0) {
+            throw new CustomException("Weight is empty");
+        }
+        if (scheduleDTO.getHeight() < 0) {
+            throw new CustomException("Height is empty");
+        }
+        if (scheduleDTO.getBmi() < 0) {
+            throw new CustomException("BMI is empty");
+        }
+        if (scheduleDTO.getGender() == null || scheduleDTO.getGender().trim().isEmpty()) {
+            throw new CustomException("Gender is empty");
+        }
+        if (scheduleDTO.getFitnessGoal() == null || scheduleDTO.getFitnessGoal().trim().isEmpty()) {
+            throw new CustomException("Fitness Goal is empty");
+        }
+    }
+
 
 
     private String determineScheduleFromPrediction(List<List<Integer>> prediction) {
@@ -154,21 +169,22 @@ public class ScheduleServiceImpl implements ScheduleService {
                 return "Unknown Schedule";
         }
 
-        // Determine the schedule based on column position
-//        switch (colPosition) {
-//
-//            case 0:
-//                return "Bulk Up Blueprint";
-//            case 1:
-//                return "Fat Burn Fiesta";
-//            case 2:
-//                return "Fit Life Routine";
-//            case 3:
-//                return "Gain Game Plan";
-//            case 4:
-//                return "Power Plan";
-//            default:
-//                return "Unknown Schedule";
-//        }
+    }
+
+    private boolean saveScheduleDetails(int scheduleNO){
+    return true;
+    }
+
+    @Override
+    public ResponseEntity<?> saveSchedule(ScheduleDTO scheduleDTO)throws Exception {
+        if (scheduleDTO.getScheduleName() == null || scheduleDTO.getScheduleName().isEmpty()) {
+            throw new CustomException("Schedule Name is empty");
+        }
+        // Convert ScheduleDTO to Schedule entity using ModelMapper
+        Schedule schedule = modelMapper.map(scheduleDTO, Schedule.class);
+        schedule.setCreateTime(new Date());
+        schedule.setIsActive(1);
+        schedule = scheduleRepository.save(schedule);
+        return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success",schedule), HttpStatus.OK);
     }
 }
