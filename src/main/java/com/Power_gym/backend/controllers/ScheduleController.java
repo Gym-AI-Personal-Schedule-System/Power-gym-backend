@@ -1,7 +1,7 @@
 package com.Power_gym.backend.controllers;
 
-import com.Power_gym.backend.DTO.PrivilegeDTO;
 import com.Power_gym.backend.DTO.ScheduleDTO;
+import com.Power_gym.backend.DTO.ScheduleRequestDTO;
 import com.Power_gym.backend.exception.CustomException;
 import com.Power_gym.backend.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class ScheduleController {
     @Autowired
     ScheduleService scheduleService;
     @PostMapping(value = "generateSchedule")
-    ResponseEntity<?> addNewPrivilege(@RequestBody ScheduleDTO scheduleDTO) throws Exception{
+    ResponseEntity<?> generateSchedule(@RequestBody ScheduleRequestDTO scheduleDTO) throws Exception{
         try {
             return scheduleService.getSchedule(scheduleDTO);
         } catch (CustomException e) {
@@ -29,4 +29,16 @@ public class ScheduleController {
             throw new RuntimeException("SH_0001 : "+e.getMessage());
         }
     }
+
+    @PostMapping(value = "saveSchedule")
+    ResponseEntity<?> saveSchedule(@RequestBody ScheduleDTO scheduleDTO) throws Exception{
+        try {
+            return scheduleService.saveSchedule(scheduleDTO);
+        } catch (CustomException e) {
+            throw new CustomException("SH_0002 : "+ e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("SH_0002 : "+e.getMessage());
+        }
+    }
+
 }
