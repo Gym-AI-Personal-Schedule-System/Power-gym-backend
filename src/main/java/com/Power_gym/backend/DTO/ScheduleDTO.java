@@ -8,6 +8,7 @@ import lombok.*;
 @Setter
 @Builder
 public class ScheduleDTO {
+    private Integer scheduleID;
     private String scheduleName;
     private String createTime;
     private Integer isActive;

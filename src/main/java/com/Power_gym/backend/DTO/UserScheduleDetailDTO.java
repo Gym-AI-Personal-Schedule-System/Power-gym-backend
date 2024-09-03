@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Builder
-public class ScheduleDetailDTO {
+public class UserScheduleDetailDTO {
     private Integer scheduleDetailID;
     private Integer age;
     private String gender;

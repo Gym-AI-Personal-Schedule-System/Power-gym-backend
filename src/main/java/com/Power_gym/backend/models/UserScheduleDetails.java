@@ -10,12 +10,12 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "schedule_details")
-public class ScheduleDetails {
+@Table(name = "user_schedule_details")
+public class UserScheduleDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "schedule_detail_id")
-    private Integer scheduleDetailID;
+    @Column(name = "user_schedule_detail_id")
+    private Integer userScheduleDetailID;
 
     @Column(name = "age")
     private Integer age;
@@ -50,8 +50,8 @@ public class ScheduleDetails {
     private Integer isActive;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule_id", referencedColumnName = "schedule_id", insertable = false, updatable = false)
-    private Schedule schedule;
+    @JoinColumn(name = "exercise_detail_id", referencedColumnName = "exercise_detail_id")
+    private ExerciseDetails exerciseDetails;
 
     @Column(name = "user_id")
     private Integer userId;

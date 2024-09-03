@@ -1,12 +1,14 @@
 package com.Power_gym.backend.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "exercise_details")
 public class ExerciseDetails {
 
@@ -16,12 +18,18 @@ public class ExerciseDetails {
     private Integer exerciseDetailId;
 
     @ManyToOne
-    @JoinColumn(name = "exercise_id",referencedColumnName = "exercise_id", insertable = false, updatable = false)
+    @JoinColumn(name = "exercise_id",referencedColumnName = "exercise_id")
     private Exercise exerciseID;
 
     @ManyToOne
-    @JoinColumn(name = "schedule_id",referencedColumnName = "schedule_id", insertable = false, updatable = false)
+    @JoinColumn(name = "schedule_id",referencedColumnName = "schedule_id")
     private Schedule scheduleId;
+
+    @Column(name = "sets")
+    private String sets;
+
+    @Column(name = "experience")
+    private int experience;
 
     @Column(name = "is_active",columnDefinition = "integer default 1")
     private Integer isActive;
