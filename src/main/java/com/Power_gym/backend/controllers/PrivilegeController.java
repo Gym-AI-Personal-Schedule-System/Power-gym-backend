@@ -39,4 +39,15 @@ public class PrivilegeController {
             throw new RuntimeException("PR_0002 : "+ e.getMessage());
         }
     }
+
+    @PostMapping(value = "assignPrivileges")
+    ResponseEntity<?> assignPrivileges(@RequestBody PrivilegeDTO privilegeDTO) throws Exception{
+        try {
+            return privilegeService.assignPrivileges(privilegeDTO);
+        } catch (CustomException e) {
+            throw new CustomException("PR_0003 : "+e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("PR_0003 : "+e.getMessage());
+        }
+    }
 }

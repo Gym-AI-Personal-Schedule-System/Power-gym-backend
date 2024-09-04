@@ -58,7 +58,7 @@ public class ExerciseServiceImpl implements ExerciseService {
             }
 
             ExerciseDetails details = modelMapper.map(detailsDTO, ExerciseDetails.class);
-            details.builder().scheduleId(schedule.get()).exerciseID(exercise.get()).build();
+            details.builder().scheduleId(schedule.get()).exerciseID(exercise.get()).isActive(1).build();
             ExerciseDetails save = exerciseDetailsRepository.save(details);
             if (save.getExerciseID() != null) {
                 return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", save), HttpStatus.OK);
