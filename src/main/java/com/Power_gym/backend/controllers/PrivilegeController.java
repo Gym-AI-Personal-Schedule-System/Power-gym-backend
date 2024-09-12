@@ -50,4 +50,15 @@ public class PrivilegeController {
             throw new RuntimeException("PR_0003 : "+e.getMessage());
         }
     }
+
+    @PostMapping(value = "/getRoleWisePrivileges")
+    ResponseEntity<?> getRoleWisePrivileges(@RequestBody PrivilegeDTO privilegeDTO) throws Exception{
+        try {
+            return privilegeService.getRoleWisePrivilege(privilegeDTO);
+        } catch (CustomException e) {
+            throw new CustomException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 }
