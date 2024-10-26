@@ -16,4 +16,5 @@ public class ScheduleRequestDTO {
     private double bmi;
     private String gender;
     private String fitnessGoal;
+    private String mobileNumOne;
 }

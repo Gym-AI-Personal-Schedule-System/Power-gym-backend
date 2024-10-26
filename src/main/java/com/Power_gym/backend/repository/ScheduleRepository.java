@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface ScheduleRepository extends JpaRepository<Schedule,Integer> {
 
     Optional<Schedule> getSchedulesByScheduleID(int id);
+    Optional<Schedule> getSchedulesByWorkoutNo(int workoutNo);
 }

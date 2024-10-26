@@ -58,9 +58,9 @@ public class ExerciseServiceImpl implements ExerciseService {
             }
 
             ExerciseDetails details = modelMapper.map(detailsDTO, ExerciseDetails.class);
-            details.builder().scheduleId(schedule.get()).exerciseID(exercise.get()).isActive(1).build();
+            details.builder().schedule(schedule.get()).exercise(exercise.get()).isActive(1).build();
             ExerciseDetails save = exerciseDetailsRepository.save(details);
-            if (save.getExerciseID() != null) {
+            if (save.getExercise() != null) {
                 return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", save), HttpStatus.OK);
             }
             return new ResponseEntity<>(new ResponseMessage(HttpStatus.BAD_REQUEST.value(), "Something went wrong !"), HttpStatus.BAD_REQUEST);

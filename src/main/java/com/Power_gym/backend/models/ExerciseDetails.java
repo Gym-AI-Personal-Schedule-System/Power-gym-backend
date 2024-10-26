@@ -19,11 +19,11 @@ public class ExerciseDetails {
 
     @ManyToOne
     @JoinColumn(name = "exercise_id",referencedColumnName = "exercise_id")
-    private Exercise exerciseID;
+    private Exercise exercise;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id",referencedColumnName = "schedule_id")
-    private Schedule scheduleId;
+    private Schedule schedule;
 
     @Column(name = "sets")
     private String sets;
@@ -33,4 +33,16 @@ public class ExerciseDetails {
 
     @Column(name = "is_active",columnDefinition = "integer default 1")
     private Integer isActive;
+
+    @Override
+    public String toString() {
+        return "ExerciseDetails{" +
+                "exerciseDetailId=" + exerciseDetailId +
+                ", exercise=" + exercise +
+                ", schedule=" + schedule +
+                ", sets='" + sets + '\'' +
+                ", experience=" + experience +
+                ", isActive=" + isActive +
+                '}';
+    }
 }

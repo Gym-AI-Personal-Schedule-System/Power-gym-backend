@@ -1,5 +1,4 @@
 package com.Power_gym.backend.DTO;
-
 import lombok.*;
 
 @Getter
@@ -12,4 +11,7 @@ public class ExerciseDTO {
     private String exerciseName;
     private String video_url;
     private Integer isActive;
+
+
+
 }

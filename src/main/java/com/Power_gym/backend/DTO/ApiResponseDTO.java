@@ -12,4 +12,5 @@ import java.util.List;
 public class ApiResponseDTO {
     private List<List<Integer>> prediction;
     private String scheduleValue;
+    private List<UserScheduleDTO> scheduleDTOList;
 }

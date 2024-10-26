@@ -1,8 +1,7 @@
 package com.Power_gym.backend.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -10,6 +9,9 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user_schedule_details")
 public class UserScheduleDetails {
     @Id
@@ -24,13 +26,13 @@ public class UserScheduleDetails {
     private String gender;
 
     @Column(name = "height")
-    private Integer height;
+    private Double height;
 
     @Column(name = "experience")
     private Integer experience;
 
     @Column(name = "weight")
-    private Integer weight;
+    private Double weight;
 
     @Column(name = "bmi")
     private Double bmi;
@@ -50,11 +52,25 @@ public class UserScheduleDetails {
     private Integer isActive;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exercise_detail_id", referencedColumnName = "exercise_detail_id")
-    private ExerciseDetails exerciseDetails;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
-    @Column(name = "user_id")
-    private Integer userId;
-
+    @Override
+    public String toString() {
+        return "UserScheduleDetails{" +
+                "userScheduleDetailID=" + userScheduleDetailID +
+                ", age=" + age +
+                ", gender='" + gender + '\'' +
+                ", height=" + height +
+                ", experience=" + experience +
+                ", weight=" + weight +
+                ", bmi=" + bmi +
+                ", workoutTime=" + workoutTime +
+                ", fitnessGoal='" + fitnessGoal + '\'' +
+                ", createTime=" + createTime +
+                ", isActive=" + isActive +
+                ", user=" + user +
+                '}';
+    }
 }
 
