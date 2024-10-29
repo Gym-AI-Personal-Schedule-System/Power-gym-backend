@@ -18,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.naming.NotContextException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ExerciseServiceImpl implements ExerciseService {
@@ -36,6 +38,7 @@ public class ExerciseServiceImpl implements ExerciseService {
     public ResponseEntity<?> saveExercise(ExerciseDTO exerciseDTO) throws Exception {
         if (!exerciseDTO.getExerciseName().isEmpty() && !exerciseDTO.getVideo_url().isEmpty()) {
             Exercise exercise = modelMapper.map(exerciseDTO, Exercise.class);
+            exercise.setIsActive(1);
             Exercise save = exerciseRepository.save(exercise);
             return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", save), HttpStatus.OK);
 
@@ -68,6 +71,24 @@ public class ExerciseServiceImpl implements ExerciseService {
 
         }
         throw new CustomException("Empty Values !");
+    }
+
+    @Override
+    public ResponseEntity<?> getActiveExerciseList() throws Exception {
+        List<Exercise> dataList = exerciseRepository.findAllByIsActive(1);
+        if (dataList.isEmpty()) throw new CustomException("Exercise Data is empty !");
+
+        List<ExerciseDTO> exerciseDTOS = dataList.stream()
+                .map(exercise -> new ExerciseDTO(
+                        exercise.getExerciseId(),
+                        exercise.getExerciseName(),
+                        exercise.getVideo_url(),
+                        exercise.getIsActive()
+                ))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", exerciseDTOS), HttpStatus.OK);
+
     }
 
 

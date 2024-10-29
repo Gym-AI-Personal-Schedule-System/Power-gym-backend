@@ -31,4 +31,17 @@ public class UserController {
     public ResponseEntity<ResponseMessage> updateUser(@RequestBody UserDTO userData) throws Exception {
         return ResponseEntity.ok(userService.updatePassword(userData));
     }
+
+    @GetMapping("/getActiveMemberList")
+    public ResponseEntity<ResponseMessage> updateUser() throws Exception {
+        return ResponseEntity.ok(userService.getActiveMemberList());
+    }
+    @GetMapping("/getAllActiveUserList")
+    public ResponseEntity<ResponseMessage> getAllActiveUserList() throws Exception {
+        return ResponseEntity.ok(userService.getAllActiveUserList());
+    }
+    @GetMapping("/getAgeWiseMemberCount")
+    public ResponseEntity<ResponseMessage> getAgeWiseMemberCount() throws Exception {
+        return ResponseEntity.ok(userService.getAgeWiseMemberCount());
+    }
 }

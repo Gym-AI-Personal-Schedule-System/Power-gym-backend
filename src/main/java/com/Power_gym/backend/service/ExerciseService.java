@@ -7,4 +7,6 @@ import org.springframework.http.ResponseEntity;
 public interface ExerciseService {
     ResponseEntity<?> saveExercise(ExerciseDTO exerciseDTO)throws Exception;
     ResponseEntity<?> scheduleWiseExerciseSave(ExerciseDetailsDTO detailsDTO)throws Exception;
+
+    ResponseEntity<?> getActiveExerciseList()throws Exception;
 }

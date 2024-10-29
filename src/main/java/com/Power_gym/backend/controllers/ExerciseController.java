@@ -39,4 +39,15 @@ public class ExerciseController {
             throw new CustomException("EX002  : " +e.getMessage());
         }
     }
+
+    @PostMapping(value = "getActiveExerciseList")
+    ResponseEntity<?>getActiveExerciseList()throws Exception{
+        try {
+            return exerciseService.getActiveExerciseList();
+        }catch (CustomException e){
+            throw new CustomException("EX003  : " +e.getMessage());
+        }catch (Exception e){
+            throw new CustomException("EX003  : " +e.getMessage());
+        }
+    }
 }

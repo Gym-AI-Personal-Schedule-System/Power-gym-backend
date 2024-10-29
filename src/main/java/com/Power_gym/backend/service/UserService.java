@@ -9,4 +9,10 @@ public interface UserService {
     ResponseMessage otpSend(UserDTO userData) throws Exception;
 
     ResponseMessage updatePassword(UserDTO userData)throws Exception;
+
+    ResponseMessage getActiveMemberList()throws Exception;
+
+    ResponseMessage getAllActiveUserList()throws Exception;
+
+    ResponseMessage getAgeWiseMemberCount()throws Exception;
 }
