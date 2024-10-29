@@ -9,9 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PrivilegeDetailRepository extends JpaRepository<PrivilegeDetails,Integer> {
+
+    Optional<PrivilegeDetails> findByPrivilegeAndRole(Privilege privilege, Role user);
+
     @Query("select usp.privilege from PrivilegeDetails usp where usp.role = :role and usp.status = 1")
     List<Privilege> findPrivilegeIdsByRole(@Param("role") Role role);
 }

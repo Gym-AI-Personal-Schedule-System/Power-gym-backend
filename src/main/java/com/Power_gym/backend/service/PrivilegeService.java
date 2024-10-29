@@ -10,4 +10,7 @@ public interface PrivilegeService {
     ResponseEntity<?> getAllPrivileges() throws Exception;
 
     ResponseEntity<?> assignPrivileges(PrivilegeDTO privilegeDTO) throws Exception;
+
+    ResponseEntity<?> getRoleWisePrivilege(PrivilegeDTO privilegeDTO)throws Exception;
+
 }

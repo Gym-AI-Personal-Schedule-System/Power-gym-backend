@@ -13,6 +13,7 @@ import java.util.List;
 public class PrivilegeDTO {
     private Integer privilegeId;
     private String privilegeName;
+    private String role;
     private int status;
 
     private String userCode;

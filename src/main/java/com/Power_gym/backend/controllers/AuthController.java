@@ -27,10 +27,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -77,7 +74,12 @@ public class AuthController {
                     .map(Privilege::getPrivilegeName)
                     .collect(Collectors.toList());
         }
-        return ResponseEntity.ok(new JwtResponseDTO(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles, privileges));
+        String userCode = null;
+        Optional<User> byId = userRepository.findById(userDetails.getId());
+        if (byId.isPresent()) {
+            userCode = byId.get().getUserCode();
+        }
+        return ResponseEntity.ok(new JwtResponseDTO(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles, privileges,userCode));
     }
 
     @PostMapping("/signup")

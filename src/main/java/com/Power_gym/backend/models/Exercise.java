@@ -20,8 +20,6 @@ public class Exercise {
     @Column(name = "video_url")
     private String video_url;
 
-    @Column(name = "sets")
-    private String sets;
 
     @Column(name = "is_active",columnDefinition = "integer default 1")
     private Integer isActive;

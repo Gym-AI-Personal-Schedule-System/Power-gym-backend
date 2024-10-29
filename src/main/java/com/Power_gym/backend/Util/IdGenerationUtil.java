@@ -5,6 +5,7 @@ import com.Power_gym.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -23,6 +24,11 @@ public class IdGenerationUtil {
         }).orElse("U0001");
     }
 
+    public String otpGenerator() {
+        SecureRandom random = new SecureRandom();
+        int otp = 100000 + random.nextInt(900000);
+        return String.valueOf(otp);
+    }
 
 
 }

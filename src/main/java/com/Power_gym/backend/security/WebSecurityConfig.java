@@ -59,7 +59,9 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/v1/power-gym/auth/signup",
-                                "/api/v1/power-gym/auth/signin"
+                                "/api/v1/power-gym/auth/signin",
+                                "/api/v1/power-gym/user/otpSend",
+                                "/api/v1/power-gym/user/updatePassword"
                         )
                         .permitAll()
                         .anyRequest().authenticated());
