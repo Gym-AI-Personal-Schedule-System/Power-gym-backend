@@ -45,13 +45,38 @@ public class ScheduleController {
 
     @PostMapping(value = "getUserWiseSchedule")
     ResponseEntity<?> getUserWiseSchedule(@RequestBody RequestDTO requestDTO) throws Exception{
+        try {
             return scheduleService.getUserWiseSchedule(requestDTO);
+        } catch (CustomException e) {
+            throw new CustomException("SH_0003 : "+ e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("SH_0003 : "+e.getMessage());
+        }
+
 
     }
 
     @PostMapping(value = "getUserScheduleCreateDates")
     ResponseEntity<?> getUserScheduleCreateDates(@RequestBody UserDTO userDTO) throws Exception{
-        return scheduleService.getUserScheduleCreateDates(userDTO);
+        try {
+            return scheduleService.getUserScheduleCreateDates(userDTO);
+        } catch (CustomException e) {
+            throw new CustomException("SH_0004 : "+ e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("SH_0004 : "+e.getMessage());
+        }
+
+    }
+
+    @GetMapping(value = "getSchedule")
+    ResponseEntity<?> getSchedule() throws Exception{
+        try {
+            return scheduleService.getSchedule();
+        } catch (CustomException e) {
+            throw new CustomException("SH_0005 : "+ e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("SH_0005 : "+e.getMessage());
+        }
 
     }
 

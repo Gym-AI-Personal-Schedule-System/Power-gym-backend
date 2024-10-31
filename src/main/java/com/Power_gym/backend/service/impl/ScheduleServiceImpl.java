@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -350,5 +351,20 @@ public class ScheduleServiceImpl implements ScheduleService {
                 UserScheduleDetailDTO.builder()
                 .createTime(detail.getCreateTime() + "").build()).toList();
         return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", scheduleDetailDTOS), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> getSchedule() throws Exception {
+        List<Schedule> scheduleList = scheduleRepository.getAllByIsActive(1);
+        if(scheduleList.isEmpty())throw new CustomException("Schedule data is empty!");
+        List<ScheduleDTO>scheduleDTOList = scheduleList.stream().map(schedule ->
+                ScheduleDTO.builder()
+                        .scheduleID(schedule.getScheduleID())
+                        .scheduleName(schedule.getScheduleName())
+                        .isActive(schedule.getIsActive())
+                        .workoutNo(schedule.getWorkoutNo()).build()
+                ).toList();
+        return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", scheduleDTOList), HttpStatus.OK);
+
     }
 }

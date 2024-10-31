@@ -8,9 +8,8 @@ import org.springframework.http.ResponseEntity;
 
 public interface ScheduleService {
     ResponseEntity<?> generateSchedule(ScheduleRequestDTO scheduleDTO) throws Exception;
-
     ResponseEntity<?> saveSchedule(ScheduleDTO scheduleDTO) throws Exception;
-
     ResponseEntity<?> getUserWiseSchedule(RequestDTO userDTO) throws Exception;
     ResponseEntity<?> getUserScheduleCreateDates(UserDTO userDTO) throws Exception;
+    ResponseEntity<?> getSchedule()throws Exception;
 }
