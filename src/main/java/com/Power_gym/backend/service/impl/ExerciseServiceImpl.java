@@ -91,5 +91,12 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     }
 
+    @Override
+    public ResponseEntity<?> getExerciseCount() throws Exception {
+        List<Exercise> all = exerciseRepository.findAll();
+        if(all.isEmpty())throw new CustomException("Exercise Data is empty");
+        return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", all.size()), HttpStatus.OK);
+    }
+
 
 }

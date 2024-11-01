@@ -1,8 +1,6 @@
 package com.Power_gym.backend.controllers;
 
-import com.Power_gym.backend.DTO.ScheduleDTO;
-import com.Power_gym.backend.DTO.ScheduleRequestDTO;
-import com.Power_gym.backend.DTO.UserDTO;
+import com.Power_gym.backend.DTO.*;
 import com.Power_gym.backend.DTO.common.RequestDTO;
 import com.Power_gym.backend.exception.CustomException;
 import com.Power_gym.backend.service.ScheduleService;
@@ -43,6 +41,7 @@ public class ScheduleController {
         }
     }
 
+
     @PostMapping(value = "getUserWiseSchedule")
     ResponseEntity<?> getUserWiseSchedule(@RequestBody RequestDTO requestDTO) throws Exception{
         try {
@@ -56,10 +55,10 @@ public class ScheduleController {
 
     }
 
-    @PostMapping(value = "getUserScheduleCreateDates")
-    ResponseEntity<?> getUserScheduleCreateDates(@RequestBody UserDTO userDTO) throws Exception{
+    @PostMapping(value = "getAllUserScheduleDetails")
+    ResponseEntity<?> getAllUserScheduleDetails(@RequestBody UserDTO userDTO) throws Exception{
         try {
-            return scheduleService.getUserScheduleCreateDates(userDTO);
+            return scheduleService.getAllUserScheduleDetails(userDTO);
         } catch (CustomException e) {
             throw new CustomException("SH_0004 : "+ e.getMessage());
         } catch (Exception e) {
@@ -80,7 +79,27 @@ public class ScheduleController {
 
     }
 
+    @PostMapping(value = "saveScheduleWiseExerciseList")
+    ResponseEntity<?> saveScheduleWiseExerciseList(@RequestBody ExerciseDataDetailDTO detailsDTO) throws Exception{
+        try {
+            return scheduleService.saveScheduleWiseExerciseList(detailsDTO);
+        } catch (CustomException e) {
+            throw new CustomException("SH_0006 : "+ e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("SH_0006 : "+e.getMessage());
+        }
+    }
 
+    @GetMapping(value = "getScheduleCount")
+    ResponseEntity<?> getScheduleCount() throws Exception{
+        try {
+            return scheduleService.getScheduleCount();
+        } catch (CustomException e) {
+            throw new CustomException("SH_0007 : "+ e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("SH_0007 : "+e.getMessage());
+        }
 
+    }
 
 }

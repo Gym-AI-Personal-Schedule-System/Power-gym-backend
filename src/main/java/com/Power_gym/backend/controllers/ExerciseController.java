@@ -50,4 +50,15 @@ public class ExerciseController {
             throw new CustomException("EX003  : " +e.getMessage());
         }
     }
+
+    @GetMapping(value = "getExerciseCount")
+    ResponseEntity<?>getExerciseCount()throws Exception{
+        try {
+            return exerciseService.getExerciseCount();
+        }catch (CustomException e){
+            throw new CustomException("EX004  : " +e.getMessage());
+        }catch (Exception e){
+            throw new CustomException("EX004  : " +e.getMessage());
+        }
+    }
 }

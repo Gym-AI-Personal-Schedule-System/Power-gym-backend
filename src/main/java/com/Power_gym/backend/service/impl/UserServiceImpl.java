@@ -2,6 +2,7 @@ package com.Power_gym.backend.service.impl;
 
 import com.Power_gym.backend.DTO.AgeCountDTO;
 import com.Power_gym.backend.DTO.OtpDTO;
+import com.Power_gym.backend.DTO.RoleDTO;
 import com.Power_gym.backend.DTO.UserDTO;
 import com.Power_gym.backend.DTO.common.ResponseMessage;
 import com.Power_gym.backend.Util.IdGenerationUtil;
@@ -142,6 +143,17 @@ public class UserServiceImpl implements UserService {
 
         return new ResponseMessage(HttpStatus.OK.value(), "success", userDataList);
 
+    }
+
+    @Override
+    public ResponseMessage getActiveUserCount(RoleDTO roleDTO) throws Exception {
+        if (roleDTO.getRole()==null){throw new CustomException("user role is empty");}
+        ERole eRole = ERole.valueOf(roleDTO.getRole());
+        Role userRole = roleRepository.findByName(eRole).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+        List<User> activeMembers = userRepository.findAllByIsActiveAndRoles(1,userRole);
+
+        return new ResponseMessage(HttpStatus.OK.value(), "success", activeMembers.size());
     }
 
     public String generateForgotPasswordEmailBody(String otp) {

@@ -9,4 +9,6 @@ public interface ExerciseService {
     ResponseEntity<?> scheduleWiseExerciseSave(ExerciseDetailsDTO detailsDTO)throws Exception;
 
     ResponseEntity<?> getActiveExerciseList()throws Exception;
+
+    ResponseEntity<?> getExerciseCount()throws Exception;
 }

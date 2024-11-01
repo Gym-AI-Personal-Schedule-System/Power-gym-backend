@@ -40,6 +40,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     private ExerciseDetailsRepository exerciseDetailsRepository;
     @Autowired
     private UserScheduleRepository userScheduleRepository;
+    @Autowired
+    private ExerciseRepository exerciseRepository;
 
     Gson gson = new Gson();
 
@@ -305,7 +307,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ResponseEntity<?> getUserWiseSchedule(RequestDTO userDTO) throws CustomException {
-        if(userDTO.getUserCode().isEmpty()||userDTO.getCreatDate().isEmpty()){
+        if (userDTO.getUserCode().isEmpty() || userDTO.getCreatDate().isEmpty()) {
             throw new CustomException("User Code or Create Date is empty");
         }
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -318,7 +320,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new CustomException("Invalid date format. Expected format is yyyy-MM-dd");
         }
 
-        List<UserScheduleDetails> allUserScheduleDetailsByUserCode = userScheduleDetailsRepository.getAllUserScheduleDetailByUserCodeAndDate(userDTO.getUserCode(),createDate, 1);
+        List<UserScheduleDetails> allUserScheduleDetailsByUserCode = userScheduleDetailsRepository.getAllUserScheduleDetailByUserCodeAndDate(userDTO.getUserCode(), createDate, 1);
         if (!allUserScheduleDetailsByUserCode.isEmpty()) {
             List<UserSchedule> userSchedules = userScheduleRepository.getAllUserScheduleByScheduleDetails(allUserScheduleDetailsByUserCode);
             if (userSchedules.isEmpty()) {
@@ -342,29 +344,63 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ResponseEntity<?> getUserScheduleCreateDates(UserDTO userDTO) throws Exception {
+    public ResponseEntity<?> getAllUserScheduleDetails(UserDTO userDTO) throws Exception {
         List<UserScheduleDetails> detailsList = userScheduleDetailsRepository.getAllUserScheduleDetailsByUserCode(userDTO.getUserCode(), 1);
         if (detailsList.isEmpty()) {
             throw new CustomException("User Schedule Data is empty");
         }
         List<UserScheduleDetailDTO> scheduleDetailDTOS = detailsList.stream().map(detail ->
                 UserScheduleDetailDTO.builder()
-                .createTime(detail.getCreateTime() + "").build()).toList();
+                        .bmi(detail.getBmi())
+                        .weight(detail.getWeight())
+                        .createTime(detail.getCreateTime() + "").build()).toList();
         return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", scheduleDetailDTOS), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<?> getSchedule() throws Exception {
         List<Schedule> scheduleList = scheduleRepository.getAllByIsActive(1);
-        if(scheduleList.isEmpty())throw new CustomException("Schedule data is empty!");
-        List<ScheduleDTO>scheduleDTOList = scheduleList.stream().map(schedule ->
+        if (scheduleList.isEmpty()) throw new CustomException("Schedule data is empty!");
+        List<ScheduleDTO> scheduleDTOList = scheduleList.stream().map(schedule ->
                 ScheduleDTO.builder()
                         .scheduleID(schedule.getScheduleID())
                         .scheduleName(schedule.getScheduleName())
                         .isActive(schedule.getIsActive())
                         .workoutNo(schedule.getWorkoutNo()).build()
-                ).toList();
+        ).toList();
         return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", scheduleDTOList), HttpStatus.OK);
 
     }
+
+    @Override
+    public ResponseEntity<?> saveScheduleWiseExerciseList(ExerciseDataDetailDTO detailsDTO) throws Exception {
+        if (detailsDTO.getScheduleID() < 0) throw new CustomException("Schedule id is empty or null");
+        if (detailsDTO.getExerciseDataDTOList().isEmpty()) throw new CustomException("Exercise data list is empty");
+
+        Optional<Schedule> schedule = scheduleRepository.getSchedulesByScheduleID(detailsDTO.getScheduleID());
+        List<ExerciseDetails> detailsList = new ArrayList<>();
+        if (schedule.isPresent()) {
+            detailsDTO.getExerciseDataDTOList().stream().map(exerciseDataDTO -> {
+                Optional<Exercise> exercise = exerciseRepository.getExerciseByExerciseId(exerciseDataDTO.getExerciseId());
+                ExerciseDetails exerciseDetails = ExerciseDetails.builder().exercise(exercise.get()).schedule(schedule.get()).sets(exerciseDataDTO.getSets()).experience(exerciseDataDTO.getExperience()).isActive(1).build();
+                return detailsList.add(exerciseDetails);
+            }).toList();
+
+            List<ExerciseDetails> saveDataList = exerciseDetailsRepository.saveAll(detailsList);
+            if (!saveDataList.isEmpty()){
+                return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", saveDataList), HttpStatus.OK);
+            }throw new CustomException("Exercise data not a save");
+
+        }
+        throw new CustomException("Schedule data is empty");
+    }
+
+    @Override
+    public ResponseEntity<?> getScheduleCount() throws Exception {
+        List<Schedule> all = scheduleRepository.findAll();
+        if(all.isEmpty())throw new CustomException("schedule data is empty");
+        return new ResponseEntity<>(new ResponseMessage(HttpStatus.OK.value(), "success", all.size()), HttpStatus.OK);
+    }
+
+
 }

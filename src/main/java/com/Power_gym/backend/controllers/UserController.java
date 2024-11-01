@@ -1,6 +1,7 @@
 package com.Power_gym.backend.controllers;
 
 import com.Power_gym.backend.DTO.PrivilegeDTO;
+import com.Power_gym.backend.DTO.RoleDTO;
 import com.Power_gym.backend.DTO.UserDTO;
 import com.Power_gym.backend.DTO.common.ResponseMessage;
 import com.Power_gym.backend.exception.CustomException;
@@ -43,5 +44,10 @@ public class UserController {
     @GetMapping("/getAgeWiseMemberCount")
     public ResponseEntity<ResponseMessage> getAgeWiseMemberCount() throws Exception {
         return ResponseEntity.ok(userService.getAgeWiseMemberCount());
+    }
+
+    @PostMapping("/getActiveUserCount")
+    public ResponseEntity<ResponseMessage> getActiveUserCount(@RequestBody RoleDTO roleDTO) throws Exception {
+        return ResponseEntity.ok(userService.getActiveUserCount(roleDTO));
     }
 }
