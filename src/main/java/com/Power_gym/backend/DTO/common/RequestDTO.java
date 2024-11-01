@@ -11,5 +11,4 @@ public class RequestDTO {
     private String userCode;
     private String creatDate;
 
-
 }
